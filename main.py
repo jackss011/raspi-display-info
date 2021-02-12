@@ -91,6 +91,11 @@ def draw_data(image, draw, data):
         l = font.getlength(text)
         return (xy[0] + l, xy[0] - l)
 
+    def draw_dot(xy, color, radius):
+        xye = [(xy[0] - radius, xy[1] - radius), (xy[0] + radius, xy[1] + radius)]
+        draw.ellipse(xye, fill=color)
+        return (xy[0] + radius, xy[0] - radius)
+
     margin_v = 5
     margin_h = 3
     color_detail = '#4D4D4D'
@@ -114,14 +119,24 @@ def draw_data(image, draw, data):
     l, r = draw_text((r - 4, temp_y), str(data['cpu_temp']), fill='WHITE', font=font_temp, anchor="rs")
 
     # Devices wan
-    lan_users = str(data['lan_users'])
-    wlan_users = str(data['wlan_users'])
+    color_ok = '#25ff21'
+    color_error = 'RED'
     devices_y = image.height - margin_v
+    dot_y = devices_y - 7
+    dot_radius = 3
+    dot_margin = 10
+
+    lan_users = str(data['lan_users'])
+    lan_color = color_ok if data.get('lan_status') == 'ok' else color_error
+    wlan_users = str(data['wlan_users'])
+    wlan_color = color_ok if data.get('wlan_status') == 'ok' else color_error
+
     l, r = draw_text((image.width - margin_h, devices_y), 'lan', fill=color_detail, font=font_detail, anchor="rs")
     l, r = draw_text((r - 4, devices_y), lan_users, fill='WHITE', font=font_ip, anchor="rs")
-    # draw.ellipse([(r - 4 - 6, devices_y - 2), (r - 4, devices_y - 2 - 6)], fill='GREEN')
-    
-    l, r = draw_text((margin_h, devices_y), wlan_users, fill='WHITE', font=font_ip, anchor="ls")
+    draw_dot((r - dot_margin, dot_y), radius=dot_radius, color=color_ok)
+   
+    l, r = draw_dot((margin_h, dot_y), color=color_ok, radius=dot_radius)
+    l, r = draw_text((l + dot_margin, devices_y), wlan_users, fill='WHITE', font=font_ip, anchor="ls")
     l, r = draw_text((l + 4, devices_y), 'wifi', fill=color_detail, font=font_detail, anchor="ls")
 
     
