@@ -21,8 +21,13 @@ def retrieve_ip():
     return ip
 
 
+def retrieve_cpu_temp():
+    with open('/sys/class/thermal/thermal_zone0/temp', mode='r') as file:
+        return round(int(file.read()) / 1000)
+
+
 def system_info():
-    return dict(ip=retrieve_ip())
+    return dict(ip=retrieve_ip(), cpu_temp=retrieve_cpu_temp())
 
 
 
@@ -87,7 +92,7 @@ def draw_data(image, draw, data):
         return (xy[0] + l, xy[0] - l)
 
     margin_v = 5
-    margin_h = 5
+    margin_h = 3
     color_detail = '#4D4D4D'
 
     # IP address
@@ -98,7 +103,7 @@ def draw_data(image, draw, data):
     d = str(floor(uptime_h / 24)).zfill(3)
     h = str(uptime_h % 24).zfill(2)
 
-    uptime_y = image.height / 2 + 8
+    uptime_y = image.height - margin_v - 28
     l, r = draw_text((image.width - margin_h, uptime_y), 'h', fill=color_detail, font=font_detail, anchor="rs")
     l, r = draw_text((r - 2, uptime_y), h, fill='WHITE', font=font_time, anchor="rs")
     l, r = draw_text((r - 5, uptime_y), 'd', fill=color_detail, font=font_detail, anchor="rs")
@@ -116,6 +121,13 @@ def draw_data(image, draw, data):
     
     l, r = draw_text((margin_h, devices_y), wlan_users, fill='WHITE', font=font_ip, anchor="ls")
     l, r = draw_text((l + 4, devices_y), 'wifi', fill=color_detail, font=font_detail, anchor="ls")
+
+
+    # CPU Temp
+    temp_y = 62
+    l, r = draw_text((image.width - margin_h, temp_y), '°C', fill=color_detail, font=font_temp, anchor="rs")
+    l, r = draw_text((r - 4, temp_y), str(data['cpu_temp']), fill='WHITE', font=font_temp, anchor="rs")
+
     
 
     
@@ -167,6 +179,7 @@ if __name__ == '__main__':
         font_ip = ImageFont.truetype('manrope.ttf', 20)
         font_detail = ImageFont.truetype('manrope.ttf', 16)
         font_time = ImageFont.truetype('manrope.ttf', 22)
+        font_temp = ImageFont.truetype('manrope.ttf', 26)
 
         unifi_login(usr, key)
         OLED.Device_Init()
