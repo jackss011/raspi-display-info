@@ -102,31 +102,27 @@ def draw_data(image, draw, data):
     uptime_h = data['uptime']
     d = str(floor(uptime_h / 24)).zfill(3)
     h = str(uptime_h % 24).zfill(2)
-
     uptime_y = image.height - margin_v - 28
     l, r = draw_text((image.width - margin_h, uptime_y), 'h', fill=color_detail, font=font_detail, anchor="rs")
     l, r = draw_text((r - 2, uptime_y), h, fill='WHITE', font=font_time, anchor="rs")
     l, r = draw_text((r - 5, uptime_y), 'd', fill=color_detail, font=font_detail, anchor="rs")
     l, r = draw_text((r - 2, uptime_y), d, fill='WHITE', font=font_time, anchor="rs")
   
+    # CPU Temp
+    temp_y = 62
+    l, r = draw_text((image.width - margin_h, temp_y), '°C', fill=color_detail, font=font_temp, anchor="rs")
+    l, r = draw_text((r - 4, temp_y), str(data['cpu_temp']), fill='WHITE', font=font_temp, anchor="rs")
+
     # Devices wan
     lan_users = str(data['lan_users'])
     wlan_users = str(data['wlan_users'])
-
     devices_y = image.height - margin_v
-
     l, r = draw_text((image.width - margin_h, devices_y), 'lan', fill=color_detail, font=font_detail, anchor="rs")
     l, r = draw_text((r - 4, devices_y), lan_users, fill='WHITE', font=font_ip, anchor="rs")
     # draw.ellipse([(r - 4 - 6, devices_y - 2), (r - 4, devices_y - 2 - 6)], fill='GREEN')
     
     l, r = draw_text((margin_h, devices_y), wlan_users, fill='WHITE', font=font_ip, anchor="ls")
     l, r = draw_text((l + 4, devices_y), 'wifi', fill=color_detail, font=font_detail, anchor="ls")
-
-
-    # CPU Temp
-    temp_y = 62
-    l, r = draw_text((image.width - margin_h, temp_y), '°C', fill=color_detail, font=font_temp, anchor="rs")
-    l, r = draw_text((r - 4, temp_y), str(data['cpu_temp']), fill='WHITE', font=font_temp, anchor="rs")
 
     
 
