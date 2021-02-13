@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 import time
 import socket
@@ -13,12 +14,15 @@ urllib3.disable_warnings()
 
 
 def retrieve_ip():
-    ip = None
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
+    try:
+        ip = None
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except:
+        return '-.-.-.-'
 
 
 def retrieve_cpu_temp():
@@ -175,32 +179,37 @@ REFRESH_RATE = 10
 
 
 if __name__ == '__main__':
+    clean_option = '--clean' in sys.argv
+
     try:
-        load_dotenv()
-        addr = os.getenv('INFO_ADDR')
-        port = os.getenv('INFO_PORT')
-        usr = os.getenv('INFO_USR')
-        key = os.getenv('INFO_KEY')
+        if not clean_option:
+            load_dotenv()
+            addr = os.getenv('INFO_ADDR')
+            port = os.getenv('INFO_PORT')
+            usr = os.getenv('INFO_USR')
+            key = os.getenv('INFO_KEY')
 
-        url_unifi = f"https://{addr}:{port}"
-        url_unifi_stat = f"{url_unifi}/api/s/default/stat"
+            url_unifi = f"https://{addr}:{port}"
+            url_unifi_stat = f"{url_unifi}/api/s/default/stat"
 
-        s = requests.Session()
+            s = requests.Session()
 
-        font_ip = ImageFont.truetype('manrope.ttf', 20)
-        font_detail = ImageFont.truetype('manrope.ttf', 16)
-        font_time = ImageFont.truetype('manrope.ttf', 22)
-        font_temp = ImageFont.truetype('manrope.ttf', 26)
+            font_ip = ImageFont.truetype('manrope.ttf', 20)
+            font_detail = ImageFont.truetype('manrope.ttf', 16)
+            font_time = ImageFont.truetype('manrope.ttf', 22)
+            font_temp = ImageFont.truetype('manrope.ttf', 26)
 
-        unifi_login(usr, key)
-        OLED.Device_Init()
+            unifi_login(usr, key)
+            OLED.Device_Init()
 
-        while(True):
-            loop()
+            while(True):
+                loop()
 
     except KeyboardInterrupt:
         print('\nClosed')
 
-    finally: 
+    finally:
+        if clean_option:
+            print('Cleaning...')
         OLED.Clear_Screen()
         GPIO.cleanup()

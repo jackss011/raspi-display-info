@@ -1,5 +1,5 @@
 [Unit]
-Description=Update OLED display information
+Description=DisplayInfo
 After=network.target unifi.service
 
 [Service]
@@ -7,6 +7,7 @@ Type=simple
 User=pi
 WorkingDirectory=/home/pi/display-info
 ExecStart=/usr/bin/python3 /home/pi/display-info/main.py
+ExecStop=/usr/bin/python3 /home/pi/display-info/main.py --clean
 
 [Install]
 WantedBy=multi-user.target
